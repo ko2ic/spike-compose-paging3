@@ -38,9 +38,9 @@ class GithubRepository(
         Log.d("GithubRepository", "New query: $query")
         return Pager(
             config = PagingConfig(
-                prefetchDistance = 10,
+                prefetchDistance = 1,
                 pageSize = NETWORK_PAGE_SIZE,
-                enablePlaceholders = false
+                enablePlaceholders = true
             ),
             pagingSourceFactory = { GithubPagingSource(query, service) }
         ).flow

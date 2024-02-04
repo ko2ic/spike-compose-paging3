@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,10 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -45,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.ko2ic.Injection
 import com.ko2ic.R
@@ -130,7 +134,46 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+            // プレースホルダーの表示
+            item {
+                val loadState = pagingItems.loadState
+                if (loadState.refresh is LoadState.Loading || loadState.append is LoadState.Loading) {
+                    ItemCircularProgressIndicator()
+                } else if (loadState.append is LoadState.Error) {
+                    // 追加のデータの読み込み中にエラーが発生した場合の処理
+                    Text(
+                        text = "Error: ${(loadState.append as LoadState.Error).error}",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        color = Color.Red
+                    )
+                }
+            }
         }
+    }
+
+    @Composable
+    fun ItemCircularProgressIndicator() {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+            contentAlignment = Alignment.Center
+            ) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.Center),
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            )
+        }
+    }
+
+    @Preview
+    @Composable
+    fun PreViewItemCircularProgressIndicator() {
+        ItemCircularProgressIndicator()
     }
 
     @Preview
